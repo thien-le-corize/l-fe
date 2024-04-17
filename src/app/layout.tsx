@@ -5,7 +5,7 @@ import Providers from "./provider";
 import Head from "next/head";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import LayoutCom from "@/app/pages/layout/layoutCom";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,14 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-      <Head>{barlowFont}</Head>
-      <body className={inter.className}>
-        <LayoutCom>
-          {children}
-        </LayoutCom>
-      <ReactQueryDevtools initialIsOpen={false} />
-      </body>
-
+        <Head>{barlowFont}</Head>
+        <body className={inter.className}>
+          <LayoutCom>{children}</LayoutCom>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </body>
       </Providers>
     </html>
   );

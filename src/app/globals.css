@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+  font-family: 'SVN-Amstirdam';
+  src: url('../../public/SVN-Amstirdam-Regular.woff2') format('woff2'),
+    url('../../public/SVN-Amstirdam-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SVN-Modisframe';
+  src: url('../../public/SVN-Modisframe-Regular.woff2') format('woff2'),
+    url('../../public/SVN-Modisframe-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

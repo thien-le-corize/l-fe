@@ -1,10 +1,10 @@
-import axios, { AxiosInstance, CancelToken } from 'axios';
+import axios, { AxiosInstance, CancelToken } from "axios";
 interface ApiRequest {}
 interface ApiResponse {
-    [x: string]: any;
-    url: any;
-    user: any;
-    message: any;
+  [x: string]: any;
+  url: any;
+  user: any;
+  message: any;
 }
 interface ApiParams {
   // lang?: string;
@@ -19,7 +19,7 @@ type RequestOptions<P extends ApiParams> = {
 const generateClient = (host: string) => {
   const getDefaultParams = (): ApiParams => {
     return {
-      lang: 'en',
+      lang: "en",
     };
   };
 
@@ -33,7 +33,7 @@ const generateClient = (host: string) => {
   });
 
   function isTokenExpired(token: string) {
-    const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+    const expiry = JSON.parse(atob(token.split(".")[1])).exp;
     return Math.floor(new Date().getTime() / 1000) >= expiry;
   }
 
@@ -52,7 +52,6 @@ const generateClient = (host: string) => {
           ...getDefaultParams(),
           ...request,
           ...options?.params,
-          
         },
         headers: options?.token
           ? { Authorization: `Bearer ${options?.token}` }
@@ -131,4 +130,4 @@ const generateClient = (host: string) => {
   };
 };
 
-export const httpClient = generateClient('http://localhost:3005');
+export const httpClient = generateClient("http://localhost:3001");

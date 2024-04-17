@@ -1,5 +1,5 @@
 import Image from "next/image";
-import FooterCheckIcon from './assets/footerCheck.png'
+import FooterCheckIcon from "./assets/footerCheck.png";
 import { usePathname } from "next/navigation";
 import { styled } from "styled-components";
 import { MEDIA_QUERY } from "@/utils/screenSize";
@@ -7,28 +7,31 @@ import { MEDIA_QUERY } from "@/utils/screenSize";
 /**
  * Footer layout component
  */
- const Footer = () => {
-const pathName = usePathname()
+const Footer = () => {
+  const pathName = usePathname();
+
+  const condition =
+    pathName === "/user-detail" || pathName === "/loan-register";
 
   return (
     <FooterWrapper>
       <FooterSection className="gap-5 flex flex-col items-center justify-center">
         <Divided />
         <div className="gap-0 flex flex-col items-center justify-center">
-          <Image src={FooterCheckIcon.src} alt="" width={200} height={80}/>
+          <Image src={FooterCheckIcon.src} alt="" width={200} height={80} />
           <FooterCopyRight>
             <p>® Bản Quyền Thuộc Về Ngân hàng Quân đội MB</p>
           </FooterCopyRight>
         </div>
       </FooterSection>
-      <div style={{paddingBottom: pathName === '/user-detail' ? 72 : 0}}></div>
+      <div style={{ paddingBottom: condition ? 65 : 0 }}></div>
     </FooterWrapper>
   );
 };
 
 Footer.displayName = "Footer";
 
-export default Footer
+export default Footer;
 
 const FooterWrapper = styled.div`
   display: block;
@@ -76,4 +79,3 @@ const FooterCopyRight = styled.div`
   text-align: center;
   width: 100%;
 `;
-
