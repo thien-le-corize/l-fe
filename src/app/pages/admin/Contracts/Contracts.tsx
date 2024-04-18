@@ -125,7 +125,7 @@ export const Contracts = () => {
                 {formatCurrency(contract?.tongVay)}vnd
               </td>
               <td
-                className={`px-6 text-slate-50 py-4 ${contract?.status === "notApproved" ? "bg-red-400" : "bg-sky-300"} `}
+                className={`px-6 text-slate-50 py-4 ${contract?.status === "notApproved" ? " bg-stone-500" : contract?.status === "approved" ? "bg-sky-300" : "bg-red-400"} `}
               >
                 {contract?.status}
               </td>

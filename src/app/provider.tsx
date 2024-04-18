@@ -7,8 +7,7 @@ import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useIsClient } from "@/hooks/useIsClient";
-import NextNProgress from 'nextjs-progressbar';
-
+import NextNProgress from "nextjs-progressbar";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -16,7 +15,7 @@ function makeQueryClient() {
       queries: {
         // With SSR, we usually want to set some default staleTime
         // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000,
+        // staleTime: 60 * 1000,
       },
     },
   });
@@ -33,7 +32,9 @@ function getQueryClient() {
     // This is very important so we don't re-make a new client if React
     // suspends during the initial render. This may not be needed if we
     // have a suspense boundary BELOW the creation of the query client
-    if (!browserQueryClient) {browserQueryClient = makeQueryClient();}
+    if (!browserQueryClient) {
+      browserQueryClient = makeQueryClient();
+    }
     return browserQueryClient;
   }
 }
@@ -49,10 +50,10 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <NextNProgress
-              height={5}
-              color={'#273c75'}
-              options={{ showSpinner: false }}
-            />
+        height={5}
+        color={"#273c75"}
+        options={{ showSpinner: false }}
+      />
       {children}
     </QueryClientProvider>
   );

@@ -94,7 +94,7 @@ export const Users: FC<Props> = ({ adminId }) => {
         </thead>
 
         <tbody>
-          {data.users.map((user: any) => (
+          {data.users?.map((user: any) => (
             <tr
               key={user._id}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"

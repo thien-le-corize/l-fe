@@ -43,7 +43,6 @@ export const ContractDetail = () => {
       return;
     }
     const adminId = JSON.parse(jsonAdminId);
-
     try {
       await httpClient.put(`/admin/loan-contract/${contractId}`, {
         status: "approved",
@@ -82,8 +81,9 @@ export const ContractDetail = () => {
         open={o}
         close={() => setO(false)}
       />
-      {contract.status === "notApproved" && (
-        <div className="flex gap-10">
+
+      <div className="flex gap-10">
+        {true && (
           <div>
             <button
               type="button"
@@ -93,6 +93,8 @@ export const ContractDetail = () => {
               Duyệt
             </button>
           </div>
+        )}
+        {contract.status !== "rejected" && (
           <div>
             <button
               type="button"
@@ -102,128 +104,138 @@ export const ContractDetail = () => {
               Từ chối
             </button>
           </div>
-        </div>
-      )}
-      <div>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-              <div className="overflow-hidden">
-                <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
-                  <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
-                    <tr>
-                      <th scope="col" className="px-6 py-4">
-                        ID
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        UserId
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Kỳ hạn
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Lãi suất
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Tổng vay
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Tổng tiền sau lãi
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Ngày tạo
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-neutral-200 dark:border-white/10">
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {contract._id}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <Link href={`/admin/user/${contract.userId}`}>
-                          {contract.userId}
-                        </Link>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {contract.kyHan}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {contract.laiSuat * 100}%
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {formatCurrency(contract.tongVay)}vnd
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {formatCurrency(contract.tongTienSauLai)}vnd
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {dayjs(contract.createdAt).format("DD/MM/YYYY H:m:s")}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        )}
+      </div>
+
+      <div
+        className={`flex mt-10 text-slate-50 italic text-bold ${contract?.status === "notApproved" ? " bg-stone-500" : contract?.status === "approved" ? "bg-sky-300" : "bg-red-400"} rounded-md px-2 py-5 flex-col gap-2`}
+      >
+        <div>Trạng thái: {contract.status}</div>
+        {contract.rejectReason && <div>Lý do: {contract.rejectReason}</div>}
+      </div>
+
+      <div className="divide-y flex flex-col gap-10">
+        <div>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                <div className="overflow-hidden">
+                  <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
+                    <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
+                      <tr>
+                        <th scope="col" className="px-6 py-4">
+                          ID
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          UserId
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Kỳ hạn
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Lãi suất
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Tổng vay
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Tổng tiền sau lãi
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Ngày tạo
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-neutral-200 dark:border-white/10">
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {contract._id}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <Link href={`/admin/user/${contract.userId}`}>
+                            {contract.userId}
+                          </Link>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {contract.kyHan}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {contract.laiSuat * 100}%
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {formatCurrency(contract.tongVay)}vnd
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {formatCurrency(contract.tongTienSauLai)}vnd
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {dayjs(contract.createdAt).format("DD/MM/YYYY H:m:s")}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-              <div className="overflow-hidden">
-                <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
-                  <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
-                    <tr>
-                      <th scope="col" className="px-6 py-4">
-                        Kỳ
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Số tiền phải trả
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Trạng thái
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Ngày thanh toán
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Hạn thanh toán
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {contract.loanPayments.map((loanPay: any) => (
-                      <tr
-                        key={loanPay.id}
-                        className="border-b border-neutral-200 dark:border-white/10"
-                      >
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {loanPay.ky}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {formatCurrency(loanPay.soTienPhaiTra)}vnd
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {loanPay.status !== "paid"
-                            ? "Chưa thanh toán"
-                            : "Đã thanh toán"}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {loanPay.paidDate &&
-                            dayjs(loanPay.paidDate).format("DD/MM/YYYY H:m:s")}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {loanPay.paidDeadline &&
-                            dayjs(loanPay.paidDeadline).format(
-                              "DD/MM/YYYY H:m:s"
-                            )}
-                        </td>
+        <div>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                <div className="overflow-hidden">
+                  <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
+                    <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
+                      <tr>
+                        <th scope="col" className="px-6 py-4">
+                          Kỳ
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Số tiền phải trả
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Trạng thái
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Ngày thanh toán
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Hạn thanh toán
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {contract.loanPayments.map((loanPay: any) => (
+                        <tr
+                          key={loanPay.id}
+                          className="border-b border-neutral-200 dark:border-white/10"
+                        >
+                          <td className="whitespace-nowrap px-6 py-4">
+                            {loanPay.ky}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            {formatCurrency(loanPay.soTienPhaiTra)}vnd
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            {loanPay.status !== "paid"
+                              ? "Chưa thanh toán"
+                              : "Đã thanh toán"}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            {loanPay.paidDate &&
+                              dayjs(loanPay.paidDate).format(
+                                "DD/MM/YYYY H:m:s"
+                              )}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">
+                            {loanPay.paidDeadline &&
+                              dayjs(loanPay.paidDeadline).format("DD/MM/YYYY")}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
