@@ -1,7 +1,8 @@
-import { FC } from 'react';
-import { tabObject } from '../TabButtons';
-import { UserProfile } from './UserProfile/UserProfile';
-import { UserContracts } from './UserContracts/UserContracts';
+import { FC } from "react";
+// eslint-disable-next-line no-restricted-imports
+import { tabObject } from "../TabButtons";
+import { UserProfile } from "./UserProfile/UserProfile";
+import { UserContracts } from "./UserContracts/UserContracts";
 
 type Props = {
   tabSelectedId: number;
