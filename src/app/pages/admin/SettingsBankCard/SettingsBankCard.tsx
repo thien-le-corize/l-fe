@@ -1,18 +1,11 @@
 "use client";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 import DeleteIcon from "@/assets/delete-icon.svg";
 import Image from "next/image";
 import { Modal } from "./modal/Modal";
 import { httpClient } from "@/utils/httpClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// eslint-disable-next-line no-restricted-imports
-import { SkeletonLoader } from "../common/SkeletonLoader";
+import { SkeletonLoader } from "@/app/pages/admin/common/SkeletonLoader";
 import { toast } from "react-toastify";
 import { useRevalidate } from "@/hooks/useRevalidate";
 import { debounce } from "lodash";

@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-// eslint-disable-next-line no-restricted-imports
-import { LoanRegister } from "../pages/LoanRegister/LoanRegister";
+import { LoanRegister } from "@/app/pages/LoanRegister/LoanRegister";
 
 export default async function LoanRegisterPage() {
   const nextCookies = cookies();

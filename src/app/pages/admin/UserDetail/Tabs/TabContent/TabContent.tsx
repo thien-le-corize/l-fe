@@ -1,6 +1,5 @@
 import { FC } from "react";
-// eslint-disable-next-line no-restricted-imports
-import { tabObject } from "../TabButtons";
+import { tabObject } from "@/app/pages/admin/UserDetail/Tabs/TabButtons";
 import { UserProfile } from "./UserProfile/UserProfile";
 import { UserContracts } from "./UserContracts/UserContracts";
 

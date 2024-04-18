@@ -1,9 +1,8 @@
-/* eslint-disable no-restricted-imports */
 "use client";
 
 import React, { useState } from "react";
-import Sidebar from "../Sidebar";
-import Header from "../Header";
+import Sidebar from "@/app/pages/admin/Sidebar";
+import Header from "@/app/pages/admin/Header";
 
 export default function DefaultLayout({
   children,
