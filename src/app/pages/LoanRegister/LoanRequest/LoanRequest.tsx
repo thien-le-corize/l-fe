@@ -13,7 +13,7 @@ export const LoanRequest = ({ loanInfoSelected, close, open }: any) => {
   const [u, setU] = useState<any>({});
 
   const router = useRouter();
-  console.log(u);
+
   const handleSubmit = useCallback(
     async (e: any) => {
       e.preventDefault();
@@ -26,12 +26,10 @@ export const LoanRequest = ({ loanInfoSelected, close, open }: any) => {
         userName: u.fullName,
       };
 
-      console.log(body);
       try {
         const res = await httpClient.post("/loan-contract", body);
+        router.push(`/contract/${res.id}`);
 
-        // router.push("/individual");
-        // res.id;
         toast.success(
           "Yêu cầu khoản vay thành công, vui lòng chờ hệ thống xác nhận"
         );
@@ -39,7 +37,14 @@ export const LoanRequest = ({ loanInfoSelected, close, open }: any) => {
         toast.error("Yêu cầu khoản vay thất bại");
       }
     },
-    [u]
+    [
+      loanInfoSelected?.interestRate,
+      loanInfoSelected?.kyHan,
+      loanInfoSelected?.loanPrice,
+      router,
+      u._id,
+      u.fullName,
+    ]
   );
 
   useEffect(() => {

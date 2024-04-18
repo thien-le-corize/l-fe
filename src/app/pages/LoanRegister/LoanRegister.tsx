@@ -33,7 +33,6 @@ const handleCalc = debounce(
     );
     setCalcLoanPay(payments);
     setTotal(totalPayment);
-    console.log(123);
   },
   1000
 );
