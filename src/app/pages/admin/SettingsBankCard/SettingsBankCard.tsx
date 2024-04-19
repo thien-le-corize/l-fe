@@ -11,20 +11,23 @@ import { useRevalidate } from "@/hooks/useRevalidate";
 import { debounce } from "lodash";
 
 export const SettingsBankCard = () => {
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
 
-  const [cards, setCards] = useState<any[]>([]);
+  // const [cards, setCards] = useState<any[]>([]);
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   // queryClient.getQueryData(key)
 
   const revalidate = useRevalidate();
 
-  const handleGetCards = useCallback(async (page: number) => {
+  const handleGetCards = useCallback(async () => {
+    // const handleGetCards = useCallback(async (page: number) => {
     try {
-      const res = await httpClient.get("/admin/settings/cards", { page });
-      setCards((prev) => [...prev, ...res.data.cards]);
+      // const res = await httpClient.get("/admin/settings/cards", { page });
+      const res = await httpClient.get("/admin/settings/cards");
+      // setCards((prev) => [...prev, ...res.data.cards]);
+      return res.data.cards;
       return res.data;
     } catch (error) {
       throw error;
@@ -48,40 +51,42 @@ export const SettingsBankCard = () => {
   const {
     isPending: isGetCardPending,
     isError,
-    data,
+    data: cards,
   } = useQuery({
-    queryKey: ["cards", page],
-    queryFn: () => handleGetCards(page),
+    // queryKey: ["cards", page],
+    queryKey: ["cards"],
+    queryFn: handleGetCards,
+    // queryFn: () => handleGetCards(page),
   });
 
   const { mutate } = useMutation({ mutationFn: handleDeleteCard });
 
-  const handleSetPage = useCallback(() => {
-    if (page >= data.totalPages) {
-      return;
-    }
-    setPage((prev) => prev + 1);
-  }, [data?.totalPages, page]);
+  // const handleSetPage = useCallback(() => {
+  //   if (page >= data.totalPages) {
+  //     return;
+  //   }
+  //   setPage((prev) => prev + 1);
+  // }, [data?.totalPages, page]);
 
-  const measureRef = (node: HTMLTableRowElement) => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          debounce(() => handleSetPage(), 200)();
-        }
-      });
-    });
+  // const measureRef = (node: HTMLTableRowElement) => {
+  //   const observer = new IntersectionObserver((entries) => {
+  //     entries.forEach((entry) => {
+  //       if (entry.isIntersecting) {
+  //         debounce(() => handleSetPage(), 200)();
+  //       }
+  //     });
+  //   });
 
-    if (node) {
-      observer.observe(node);
-    }
+  //   if (node) {
+  //     observer.observe(node);
+  //   }
 
-    return () => {
-      if (node) {
-        observer.unobserve(node);
-      }
-    };
-  };
+  //   return () => {
+  //     if (node) {
+  //       observer.unobserve(node);
+  //     }
+  //   };
+  // };
 
   if (isGetCardPending) {
     return <SkeletonLoader />;
@@ -93,7 +98,7 @@ export const SettingsBankCard = () => {
 
   return (
     <div>
-      {open && <Modal onClose={() => setOpen(false)} onSubmit={setCards} />}
+      {open && <Modal onClose={() => setOpen(false)} />}
       <button
         onClick={() => setOpen(true)}
         type="button"
@@ -128,7 +133,7 @@ export const SettingsBankCard = () => {
             return (
               <tr
                 key={card._id}
-                ref={index === cards.length - 1 ? measureRef : null}
+                // ref={index === cards.length - 1 ? measureRef : null}
                 className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
               >
                 <td

@@ -1,5 +1,5 @@
-import {  SettingsBankCard } from "@/app/pages/admin/SettingsBankCard/SettingsBankCard";
+import { SettingsBankCard } from "@/app/pages/admin/SettingsBankCard/SettingsBankCard";
 
 export default async function SettingsBankCardsPage() {
-    return <SettingsBankCard/>
+  return <SettingsBankCard />;
 }

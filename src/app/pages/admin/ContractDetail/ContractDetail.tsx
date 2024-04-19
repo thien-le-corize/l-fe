@@ -108,7 +108,7 @@ export const ContractDetail = () => {
       </div>
 
       <div
-        className={`flex mt-10 text-slate-50 italic text-bold ${contract?.status === "notApproved" ? " bg-stone-500" : contract?.status === "approved" ? "bg-sky-300" : "bg-red-400"} rounded-md px-2 py-5 flex-col gap-2`}
+        className={`flex mt-10 text-slate-50 italic text-bold ${contract?.status === "notApproved" ? " bg-stone-500" : contract?.status === "approved" ? "bg-sky-500" : "bg-red-400"} rounded-md px-2 py-5 flex-col gap-2`}
       >
         <div>Trạng thái: {contract.status}</div>
         {contract.rejectReason && <div>Lý do: {contract.rejectReason}</div>}
