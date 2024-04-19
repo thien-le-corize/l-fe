@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback } from "react";
 import Cookie from "js-cookie";
+import { CONTRACT_STATUS } from "@/constants/ContractStatus";
 
 export const UserContracts = () => {
   const jsonUser = Cookie.get("user");
@@ -74,7 +75,7 @@ export const UserContracts = () => {
                   ></path>
                 </svg>
                 <p className="block font-sans text-xs font-normal text-gray-700 antialiased">
-                  {contract.status}
+                  {CONTRACT_STATUS[contract.status]}
                 </p>
               </div>
             </div>

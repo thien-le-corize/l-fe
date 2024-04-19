@@ -7,6 +7,7 @@ import { SkeletonLoader } from "@/app/pages/admin/common/SkeletonLoader";
 import Cookie from "js-cookie";
 import { formatCurrency } from "@/utils/formatCurrency";
 import dayjs from "dayjs";
+import { CONTRACT_STATUS } from "@/constants/ContractStatus";
 
 export const ContractDetail = () => {
   const jsonUser = Cookie.get("user");
@@ -57,7 +58,7 @@ export const ContractDetail = () => {
           viewBox="0 0 24 24"
           fill="currentColor"
           aria-hidden="true"
-          className={`-mt-px ${contract.status !== "notApproved" ? "text-green-300" : "text-red-400"} h-4 w-4"`}
+          className={`-mt-px ${contract.status === "notApproved" ? "text-neutral-600" : contract.status === "approved" ? "text-green-300" : "text-red-400"} h-4 w-4"`}
         >
           <path
             fillRule="evenodd"
@@ -66,9 +67,9 @@ export const ContractDetail = () => {
           ></path>
         </svg>
         <p
-          className={`block ${contract.status !== "notApproved" ? "text-green-300" : "text-red-400"}  font-sans text-xl underline font-normal text-gray-700 antialiased`}
+          className={`block ${contract.status === "notApproved" ? "text-neutral-600" : contract.status === "approved" ? "text-green-300" : "text-red-400"}  font-sans text-xl underline font-normal text-gray-700 antialiased`}
         >
-          {contract.status}
+          {CONTRACT_STATUS[contract.status]}
         </p>
       </div>
 
