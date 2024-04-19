@@ -3,8 +3,7 @@ import { httpClient } from "@/utils/httpClient";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import React, { useCallback } from "react";
-// eslint-disable-next-line no-restricted-imports
-import { SkeletonLoader } from "../admin/common/SkeletonLoader";
+import { SkeletonLoader } from "@/app/pages/admin/common/SkeletonLoader";
 import Cookie from "js-cookie";
 import { formatCurrency } from "@/utils/formatCurrency";
 import dayjs from "dayjs";
