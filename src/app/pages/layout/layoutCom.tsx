@@ -27,28 +27,12 @@ import { ToastContainer } from "react-toastify";
 import { ModalProvider } from "styled-react-modal";
 
 export const headerHeightInit = atom(70);
-export const userAtom = atom<any>(null);
 
 /** Layout components */
 const LayoutCom: FC<PropsWithChildren> = ({ children }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [headerHeight, setHeaderHeight] = useAtom(headerHeightInit);
-  const setUser = useSetAtom(userAtom);
-
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (pathname) {
-      const user = Cookie.get("user");
-      if (!user) {
-        return;
-      }
-
-      const userValue = JSON.parse(user);
-      setUser(userValue);
-    }
-  }, [pathname, setUser]);
 
   useMediaQuery(SCREEN_SIZE.TABLET);
 

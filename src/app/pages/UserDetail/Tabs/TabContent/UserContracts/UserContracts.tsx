@@ -41,7 +41,7 @@ export const UserContracts = () => {
   }
 
   return (
-    <div className="-mx-4 flex flex-wrap justify-start px-10">
+    <div className="-mx-4 min-h-96 flex flex-wrap justify-start px-10">
       {contracts.map((contract: any) => (
         <div
           key={contract.id}

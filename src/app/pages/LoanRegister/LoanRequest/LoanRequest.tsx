@@ -27,8 +27,8 @@ export const LoanRequest = ({ loanInfoSelected, close, open }: any) => {
       };
 
       try {
-        const res = await httpClient.post("/loan-contract", body);
-        router.push(`/contract/${res.id}`);
+        await httpClient.post("/loan-contract", body);
+        router.push(`/user-detail?tab=contracts`);
 
         toast.success(
           "Yêu cầu khoản vay thành công, vui lòng chờ hệ thống xác nhận"

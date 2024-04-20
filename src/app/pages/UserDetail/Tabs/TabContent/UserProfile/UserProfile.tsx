@@ -1,28 +1,55 @@
 "use client";
 import { httpClient } from "@/utils/httpClient";
-import React, { useCallback, useEffect, useState } from "react";
-// eslint-disable-next-line no-restricted-imports
-import { useAtom } from "jotai";
-import Cookie from "js-cookie";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce, first, omit } from "lodash";
 import { useUploadImage } from "@/hooks/useUploadImage.hooks";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { userAtom } from "@/app/pages/layout/layoutCom";
+import Cookies from "js-cookie";
 
 export const UserProfile = () => {
-  const [user, setUser] = useAtom(userAtom);
-
+  const firstRef = useRef(true);
   const [formData, setFormData] = useState<any>({ bankType: "Domestic" });
   const [currentTab, setCurrentTab] = useState(0);
+
+  const jsonUser = Cookies.get("user");
+  const user = JSON.parse(jsonUser ?? "{}");
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const isVerified = user?.status === "verified";
   const isShowToast = searchParams.get("verify");
+
+  useEffect(() => {
+    if (user && firstRef.current) {
+      setFormData((prev: any) => ({
+        ...prev,
+        fullName: user?.fullName ?? "",
+        academic_level: user?.academic_level ?? "",
+        address: user?.address ?? "",
+        bank: user?.bank ?? "",
+        bankType: user?.bankType ?? "",
+        bank_credit_id: user?.bank_credit_id ?? "",
+        bank_credit_owner: user?.bank_credit_owner ?? "",
+        career: user?.career ?? "",
+        cmnd: user?.cmnd ?? "",
+        cmnd_behide: user?.cmnd_behide ?? "",
+        cmnd_front: user?.cmnd_front ?? "",
+        day_of_birth: user?.day_of_birth ?? "",
+        face_image: user?.face_image ?? "",
+        gender: user?.gender ?? "",
+        income: user?.income ?? "",
+        loan_purpose: user?.loan_purpose ?? "",
+        maritalStatus: user?.maritalStatus ?? "",
+        phoneNumber: user?.phoneNumber ?? "",
+      }));
+
+      firstRef.current = false;
+    }
+  }, [user]);
 
   const updateUser = useCallback(
     async (request: any) => {
@@ -32,9 +59,8 @@ export const UserProfile = () => {
 
       try {
         const res = await httpClient.put(`/auth/${user._id}`, request);
-        setUser(res.user);
         toast.success("Xác minh danh tính thành công");
-        Cookie.set("user", JSON.stringify(res.user));
+        Cookies.set("user", JSON.stringify(res.user));
         if (isShowToast) {
           router.push("/loan-register");
         }
@@ -42,7 +68,7 @@ export const UserProfile = () => {
         throw error;
       }
     },
-    [isShowToast, router, setUser, user]
+    [isShowToast, router, user]
   );
 
   const handleData = useCallback((fieldData: object) => {
@@ -140,7 +166,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ fullName: e.target.value })}
-                  value={user?.fullName}
+                  value={formData?.fullName}
                   type="text"
                   name="fullName"
                   id="fullName"
@@ -158,7 +184,7 @@ export const UserProfile = () => {
                 <select
                   required
                   id="gender"
-                  value={user?.gender}
+                  value={formData?.gender}
                   onChange={(e) => handleData({ gender: e.target.value })}
                   className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
@@ -180,7 +206,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ cmnd: e.target.value })}
-                  value={user?.cmnd}
+                  value={formData?.cmnd}
                   type="text"
                   name="cmnd"
                   id="cmnd"
@@ -198,7 +224,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ day_of_birth: e.target.value })}
-                  value={user?.day_of_birth}
+                  value={formData?.day_of_birth}
                   type="text"
                   name="day_of_birth"
                   id="day_of_birth"
@@ -216,7 +242,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ address: e.target.value })}
-                  value={user?.address}
+                  value={formData?.address}
                   type="text"
                   name="address"
                   id="address"
@@ -236,7 +262,7 @@ export const UserProfile = () => {
                   onChange={(e) =>
                     handleData({ academic_level: e.target.value })
                   }
-                  value={user?.academic_level}
+                  value={formData?.academic_level}
                   type="text"
                   name="academic_level"
                   id="academic_level"
@@ -254,7 +280,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ loan_purpose: e.target.value })}
-                  value={user?.loan_purpose}
+                  value={formData?.loan_purpose}
                   type="text"
                   name="loan_purpose"
                   id="loan_purpose"
@@ -274,7 +300,7 @@ export const UserProfile = () => {
                   required
                   id="income"
                   onChange={(e) => handleData({ income: e.target.value })}
-                  value={user?.income}
+                  value={formData?.income}
                   className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option selected>Chọn thu nhập</option>
@@ -298,7 +324,7 @@ export const UserProfile = () => {
                   onChange={(e) =>
                     handleData({ maritalStatus: e.target.value })
                   }
-                  value={user?.maritalStatus}
+                  value={formData?.maritalStatus}
                   className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option selected>Chọn tình trạng quan hệ</option>
@@ -319,7 +345,7 @@ export const UserProfile = () => {
                   disabled={isVerified}
                   required
                   onChange={(e) => handleData({ career: e.target.value })}
-                  value={user?.career}
+                  value={formData?.career}
                   type="text"
                   name="career"
                   id="career"
@@ -341,7 +367,7 @@ export const UserProfile = () => {
                 <input
                   disabled={isVerified}
                   id="bordered-radio-1"
-                  defaultChecked={user?.bankType === "domestic"}
+                  defaultChecked={formData?.bankType === "domestic"}
                   onClick={() => {
                     handleData({ bankType: "domestic" });
                     handleResetBankData();
@@ -364,7 +390,7 @@ export const UserProfile = () => {
                 <input
                   disabled={isVerified}
                   id="bordered-radio-2"
-                  defaultChecked={user?.bankType === "international"}
+                  defaultChecked={formData?.bankType === "international"}
                   onClick={() => {
                     handleData({ bankType: "international" });
                     handleResetBankData();
@@ -398,7 +424,7 @@ export const UserProfile = () => {
                     required
                     id="bank"
                     onChange={(e) => handleData({ bank: e.target.value })}
-                    value={user?.bank}
+                    value={formData?.bank}
                     className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option selected>Chọn ngân hàng thụ hưởng</option>
@@ -423,7 +449,7 @@ export const UserProfile = () => {
                     onChange={(e) =>
                       handleData({ bank_credit_id: e.target.value })
                     }
-                    value={user?.bank_credit_id}
+                    value={formData?.bank_credit_id}
                     type="text"
                     name="bank_credit_id"
                     id="bank_credit_id"
@@ -444,7 +470,7 @@ export const UserProfile = () => {
                     onChange={(e) =>
                       handleData({ bank_credit_owner: e.target.value })
                     }
-                    value={user?.bank_credit_owner}
+                    value={formData?.bank_credit_owner}
                     type="text"
                     name="bank_credit_owner"
                     id="bank_credit_owner"
@@ -465,7 +491,7 @@ export const UserProfile = () => {
                     disabled={isVerified}
                     required
                     onChange={(e) => handleData({ bank: e.target.value })}
-                    value={user?.bank}
+                    value={formData?.bank}
                     type="text"
                     name="bank"
                     id="bank"
@@ -486,7 +512,7 @@ export const UserProfile = () => {
                     onChange={(e) =>
                       handleData({ bank_credit_id: e.target.value })
                     }
-                    value={user?.bank_credit_id}
+                    value={formData?.bank_credit_id}
                     type="text"
                     name="bank_credit_id"
                     id="bank_credit_id"
@@ -507,7 +533,7 @@ export const UserProfile = () => {
                     onChange={(e) =>
                       handleData({ bank_credit_owner: e.target.value })
                     }
-                    value={user?.bank_credit_owner}
+                    value={formData?.bank_credit_owner}
                     type="text"
                     name="bank_credit_owner"
                     id="bank_credit_owner"
@@ -541,7 +567,7 @@ export const UserProfile = () => {
                 />
                 {(!!formData?.cmnd_front || !!user?.cmnd_front) && (
                   <Image
-                    src={user.cmnd_front || formData.cmnd_front}
+                    src={formData.cmnd_front || user.cmnd_front}
                     alt=""
                     width={200}
                     height={100}

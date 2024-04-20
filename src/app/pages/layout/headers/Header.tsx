@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import Image from "next/image";
 import { LegacyRef, forwardRef, useCallback, useRef } from "react";
@@ -7,26 +7,26 @@ import useHeaderAnimation from "./useHeaderAnimation";
 import { matches } from "@/hooks/useMediaQuery";
 import ArrowRight from "@/assets/arrow-right.png";
 import Logo from "@/assets/logo.png";
-import userLogo from './assets/user.png'
+import userLogo from "./assets/user.png";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-// eslint-disable-next-line no-restricted-imports
-import { userAtom } from "../layoutCom";
 import { MEDIA_QUERY } from "@/utils/screenSize";
 import { ButtonWrapper } from "@/app/components/Button/styles";
 import { Button } from "@/app/components/Button";
 import Link from "next/link";
 import Menu from "./Menu/Menu";
+import Cookies from "js-cookie";
 
 export const menuActiveStatus = atom(false);
 
 const Header = forwardRef<object, { ref: (node: object) => void }>(
   (__, ref) => {
-    const user = useAtomValue(userAtom);
-
     const headerContainer = useRef<HTMLDivElement>(null);
     const setMenuActive = useSetAtom(menuActiveStatus);
     const isTablet = useAtomValue(matches);
+
+    const jsonUser = Cookies.get("user");
+    const user = JSON.parse(jsonUser ?? "{}");
 
     const { handleHideAnimate, handleShowAnimate } =
       useHeaderAnimation(headerContainer);
@@ -43,13 +43,13 @@ const Header = forwardRef<object, { ref: (node: object) => void }>(
       });
     }, [handleHideAnimate, handleShowAnimate, setMenuActive]);
 
-    const router = useRouter()
+    const router = useRouter();
 
     return (
       <HeaderWrapper className="drop-shadow-2xl">
         <HeaderSection ref={headerContainer}>
           <FirstHeaderSection ref={ref as LegacyRef<HTMLDivElement>}>
-            <Link href={'/'}>
+            <Link href={"/"}>
               <Image src={Logo.src} alt="Logo" width={250} height={80} />
             </Link>
             <MenuButton onClick={handleToggle}>
@@ -67,20 +67,33 @@ const Header = forwardRef<object, { ref: (node: object) => void }>(
               <Menu />
             </HeaderMenu>
             <HeaderButton>
-              <HeaderLanguage>
-              </HeaderLanguage>
-              {user ? <ButtonWrap><Button onClick={() => router.push('/user-detail')} text="" icon={userLogo.src} /></ButtonWrap> : <Button onClick={() => router.push('/login')} text="Đăng nhập" icon={ArrowRight.src} />}
+              <HeaderLanguage></HeaderLanguage>
+              {user ? (
+                <ButtonWrap>
+                  <Button
+                    onClick={() => router.push("/user-detail")}
+                    text=""
+                    icon={userLogo.src}
+                  />
+                </ButtonWrap>
+              ) : (
+                <Button
+                  onClick={() => router.push("/login")}
+                  text="Đăng nhập"
+                  icon={ArrowRight.src}
+                />
+              )}
             </HeaderButton>
           </MenuContentWrapper>
         </HeaderSection>
       </HeaderWrapper>
     );
-  },
+  }
 );
 
 Header.displayName = "Header";
 
-export default Header
+export default Header;
 
 const ButtonWrap = styled.div`
   height: 100%;
@@ -100,7 +113,7 @@ const ButtonWrap = styled.div`
     background-color: white;
     /* padding: 8px; */
   }
-`
+`;
 
 const HeaderWrapper = styled.div`
   width: 100%;
@@ -130,8 +143,6 @@ const HeaderSection = styled.section`
     flex-direction: column;
   }
 `;
-
-
 
 const HeaderMenu = styled.div`
   flex: 1 1 50%;
