@@ -10,9 +10,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "demo1.web678.com",
+      },
     ],
     formats: ["image/webp"],
   },
+
   env: {
     ENV: process.env.ENV,
   },
