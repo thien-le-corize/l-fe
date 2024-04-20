@@ -15,7 +15,6 @@ import { CONTRACT_STATUS } from "@/constants/ContractStatus";
 
 export const BankingReqDetail = () => {
   const [o, setO] = useState(false);
-  const [otp, setOtp] = useState<number>();
   const [loading, setLoading] = useState(false);
 
   const revalidate = useRevalidate();
@@ -72,6 +71,39 @@ export const BankingReqDetail = () => {
     enabled: !!jsonAdminId,
   });
 
+  const bankingDone = useCallback(
+    async (value: any) => {
+      if (!jsonAdminId || !!banking?.isBankingDone) {
+        return;
+      }
+
+      const adminId = JSON.parse(jsonAdminId);
+
+      try {
+        await httpClient.post("/admin/banking-done", {
+          adminId,
+          bankingId,
+          userId: banking.userId,
+          tienRut: banking.tienRut,
+          isBankingDone: value,
+        });
+
+        revalidate(["admin", "bankings", bankingId]);
+        toast.success("Đánh dấu chuyển khoản thành công");
+      } catch (error) {
+        toast.error("Check error");
+      }
+    },
+    [
+      banking?.isBankingDone,
+      banking?.tienRut,
+      banking?.userId,
+      bankingId,
+      jsonAdminId,
+      revalidate,
+    ]
+  );
+
   if (isLoading) {
     return <SkeletonLoader />;
   }
@@ -88,40 +120,73 @@ export const BankingReqDetail = () => {
         open={o}
         close={() => setO(false)}
       />
-      <div className="flex gap-10">
-        {banking.status !== "rejected" && (
-          <div>
-            <button
-              type="button"
-              onClick={() => setO(true)}
-              className="inline-block rounded bg-red-700 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-            >
-              Từ chối
-            </button>
-          </div>
-        )}
-      </div>
 
-      <div className="flex gap-5 items-center">
-        <button
-          className="inline-block rounded bg-sky-800 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-          disabled={loading}
-          onClick={generateOtp}
-        >
-          Tạo OTP
-        </button>
-        <div className="px-3 py-2 bg-slate-200 rounded-sm text-slate-900">
-          {banking.otp}
+      {banking.isCheckOtp && (
+        <div className="flex items-center px-2 py5 ">
+          <input
+            id="default-checkbox"
+            type="checkbox"
+            checked={!!banking.isBankingDone}
+            onChange={(e) => bankingDone(e.target.checked)}
+            className="w-4 h-4 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <label
+            htmlFor="default-checkbox"
+            className="ms-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            Đã chuyển tiền
+          </label>
         </div>
-      </div>
+      )}
 
-      <div
-        className={`flex mt-10 text-slate-50 italic text-bold ${banking?.status === "notApproved" ? " bg-stone-500" : banking?.status === "approved" ? "bg-sky-500" : "bg-red-400"} rounded-md px-2 py-5 flex-col gap-2`}
-      >
-        <div>Trạng thái: {CONTRACT_STATUS[banking.status]}</div>
-        {!!banking.rejectReason && banking.status === "rejected" && (
-          <div>Lý do: {banking.rejectReason}</div>
-        )}
+      {!banking.isCheckOtp && (
+        <>
+          <div className="flex gap-10">
+            {banking.status !== "rejected" && (
+              <>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setO(true)}
+                    className="inline-block rounded bg-red-700 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+                  >
+                    Từ chối
+                  </button>
+                </div>
+                <div className="flex gap-5 items-center">
+                  <button
+                    className="inline-block rounded bg-sky-800 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+                    disabled={loading}
+                    onClick={generateOtp}
+                  >
+                    Tạo OTP
+                  </button>
+                  <div className="px-3 py-2 bg-slate-200 rounded-sm text-slate-900">
+                    {banking.otp}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div
+            className={`flex mt-10 text-slate-50 italic text-bold ${banking?.status === "notApproved" ? " bg-stone-500" : banking?.status === "approved" ? "bg-sky-500" : "bg-red-400"} rounded-md px-2 py-5 flex-col gap-2`}
+          >
+            <div>Trạng thái: {CONTRACT_STATUS[banking.status]}</div>
+            {!!banking.rejectReason && banking.status === "rejected" && (
+              <div>Lý do: {banking.rejectReason}</div>
+            )}
+          </div>
+        </>
+      )}
+
+      <div>
+        Hợp đồng số:
+        <span className="whitespace-nowrap px-6 py-4">
+          <Link href={`/admin/contracts/${banking.contractId}`}>
+            {banking.contractId}
+          </Link>
+        </span>
       </div>
 
       <div>
@@ -148,6 +213,9 @@ export const BankingReqDetail = () => {
                         <th scope="col" className="px-6 py-4">
                           Ngày tạo
                         </th>
+                        <th scope="col" className="px-6 py-4">
+                          Ngày chuyển tiền
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -168,6 +236,12 @@ export const BankingReqDetail = () => {
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
                           {dayjs(banking.createdAt).format("DD/MM/YYYY H:m:s")}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {banking.bankingDate &&
+                            dayjs(banking.bankingDate).format(
+                              "DD/MM/YYYY H:m:s"
+                            )}
                         </td>
                       </tr>
                     </tbody>

@@ -10,26 +10,16 @@ import { BankingReqModal } from "./BankingReqModal/BankingReqModal";
 import BankLinks from "./assets/bank-links.jpeg";
 import { CONTRACT_STATUS } from "@/constants/ContractStatus";
 import { toast } from "react-toastify";
+import { useRevalidate } from "@/hooks/useRevalidate";
 
 export const MyWallet = () => {
   const [o, setO] = useState(false);
-  const [otp, setOtp] = useState<number>();
+  const [otp, setOtp] = useState("");
 
   const jsonUser = Cookies.get("user");
   const user = JSON.parse(jsonUser ?? "{}");
 
-  const checkOTP = useCallback(async () => {
-    const userId = user._id;
-    if (!userId) {
-      return;
-    }
-
-    try {
-      const res = await httpClient.post("/check-otp", { userId, otp });
-    } catch (error) {
-      toast.error("Gửi OTP thất bại");
-    }
-  }, [otp, user?._id]);
+  const revalidate = useRevalidate();
 
   const getBanking = useCallback(async () => {
     const userId = user._id;
@@ -71,6 +61,25 @@ export const MyWallet = () => {
     isError,
     data: me,
   } = useQuery({ queryKey: ["me"], queryFn: getMe });
+
+  const checkOTP = useCallback(async () => {
+    const userId = user._id;
+    if (!userId || !Number(otp)) {
+      toast.error("OTP không hợp lệ");
+      return;
+    }
+
+    try {
+      await httpClient.post("/banking/check-otp", {
+        userId,
+        otp,
+        bankingId: banking._id,
+      });
+      revalidate(["banking"]);
+    } catch (error) {
+      toast.error("OTP không khớp");
+    }
+  }, [banking?._id, revalidate, otp, user?._id]);
 
   if (isLoading) {
     return <Loader />;
@@ -115,7 +124,15 @@ export const MyWallet = () => {
 
           <div>
             <button
-              onClick={() => setO(true)}
+              onClick={() => {
+                if (banking.status === "notApproved") {
+                  toast.error(
+                    "Bạn cần phải được hệ thống xử yêu cầu chuyển tiền trước khi tạo mới yêu cầu chuyển tiền tiếp theo"
+                  );
+                  return;
+                }
+                setO(true);
+              }}
               className="flex bg-sky-700 w-full px-3 py-5 gap-3 rounded-xl"
             >
               <svg
@@ -153,7 +170,9 @@ export const MyWallet = () => {
                   >
                     Số tiền rút
                   </th>
-                  <td className="px-6 py-4">{banking.tienRut}</td>
+                  <td className="px-6 py-4">
+                    {formatCurrency(banking.tienRut)}vnd
+                  </td>
                 </tr>
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -163,10 +182,11 @@ export const MyWallet = () => {
                     Trạng thái
                   </th>
                   <td className="px-6 py-4">
-                    {CONTRACT_STATUS[banking.status]}
+                    {CONTRACT_STATUS[banking.status]}{" "}
+                    {banking.isBankingDone && <span>(Đã rút tiền)</span>}
                   </td>
                 </tr>
-                {banking.status === "notApproved" && (
+                {banking.status === "approved" && !banking.isCheckOtp && (
                   <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
                       scope="row"
@@ -181,14 +201,12 @@ export const MyWallet = () => {
                           className="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="NHẬP OTP"
                           maxLength={4}
-                          onChange={(e) =>
-                            Number(e.target.value) &&
-                            setOtp(Number(e.target.value))
-                          }
+                          onChange={(e) => setOtp(e.target.value)}
                         />
                       </div>
                       <button
-                        type="submit"
+                        type="button"
+                        onClick={checkOTP}
                         className="text-white ease-out w-2/12 bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                       >
                         Gửi
@@ -196,15 +214,17 @@ export const MyWallet = () => {
                     </td>
                   </tr>
                 )}
-                {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
-                    Trạng thái
-                  </th>
-                  <td className="px-6 py-4">Laptop PC</td>
-                </tr> */}
+                {banking.status === "rejected" && (
+                  <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      Lý do
+                    </th>
+                    <td className="px-6 py-4">{banking.rejectReason}</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

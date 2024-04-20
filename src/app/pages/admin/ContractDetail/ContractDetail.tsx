@@ -4,8 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Cookie from "js-cookie";
 import { useParams } from "next/navigation";
 import React, { useCallback, useState } from "react";
-// eslint-disable-next-line no-restricted-imports
-import { SkeletonLoader } from "../common/SkeletonLoader";
+import { SkeletonLoader } from "@/app/pages/admin/common/SkeletonLoader";
 import { formatCurrency } from "@/utils/formatCurrency";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -55,6 +54,30 @@ export const ContractDetail = () => {
       toast.error("Duyệt thất bại");
     }
   }, [contractId, jsonAdminId, revalidate]);
+
+  const handleTickPaid = useCallback(
+    async (kyHanId: number) => {
+      if (!jsonAdminId) {
+        return;
+      }
+
+      const adminId = JSON.parse(jsonAdminId);
+
+      try {
+        await httpClient.put(
+          `/admin/loan-contract/${contractId}/tick-paid-ky-han/${kyHanId}`,
+          {
+            adminId,
+          }
+        );
+
+        revalidate(["admin", "contract", contractId]);
+      } catch (error) {
+        toast.error("Tick thất bại");
+      }
+    },
+    [contractId, jsonAdminId, revalidate]
+  );
 
   const {
     data: contract,
@@ -220,9 +243,21 @@ export const ContractDetail = () => {
                             {formatCurrency(loanPay.soTienPhaiTra)}vnd
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {loanPay.status !== "paid"
-                              ? "Chưa thanh toán"
-                              : "Đã thanh toán"}
+                            <input
+                              id={`default-checkbox-${loanPay.id}`}
+                              type="checkbox"
+                              checked={!!loanPay.paid}
+                              onChange={() => handleTickPaid(loanPay.id)}
+                              className="w-4 h-4 cursor-pointer text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor={`default-checkbox-${loanPay.id}`}
+                              className="ms-2 cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {!loanPay.paid
+                                ? "Chưa thanh toán"
+                                : "Đã thanh toán"}
+                            </label>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
                             {loanPay.paidDate &&

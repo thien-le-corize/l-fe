@@ -109,7 +109,7 @@ export const Contracts = () => {
         </thead>
 
         <tbody>
-          {data.contracts.map((contract: any) => (
+          {data.contracts?.map((contract: any) => (
             <tr
               key={contract._id}
               className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
