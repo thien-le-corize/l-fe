@@ -1,8 +1,8 @@
-import { SettingsBankCard } from "@/app/pages/admin/SettingsBankCard/SettingsBankCard";
+import { BankingReqs } from "@/app/pages/admin/BankingReqs/BankingReqs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function SettingsBankCardsPage() {
+export default async function BankingReqsPage() {
   const cookieStore = cookies();
   const adminId = cookieStore.get("adminId");
   const parsedAdminId = adminId && JSON.parse(adminId.value ?? "");
@@ -11,5 +11,5 @@ export default async function SettingsBankCardsPage() {
     redirect("/admin/login");
   }
 
-  return <SettingsBankCard />;
+  return <BankingReqs />;
 }
